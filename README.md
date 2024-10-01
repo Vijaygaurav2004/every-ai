@@ -1,50 +1,102 @@
-# React + TypeScript + Vite
+# AI Workplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI Workplace is a web application that provides an interface for various AI tools, including text generation and image creation using Cloudflare AI.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Before you begin, ensure you have the following installed:
+- Node.js (v14 or later)
+- npm (usually comes with Node.js)
+- A Cloudflare account with access to Cloudflare AI
 
-## Expanding the ESLint configuration
+## Local Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Frontend Setup
 
-- Configure the top-level `parserOptions` property like this:
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd ai-workplace
+   ```
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+3. Create a `.env` file in the root directory and add the following:
+   ```
+   VITE_API_URL=http://localhost:8787
+   ```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+4. Start the development server:
+   ```
+   npm run dev
+   ```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+   The frontend should now be running on `http://localhost:5173`.
+
+### Backend Setup
+
+1. Navigate to the backend directory:
+   ```
+   cd backend
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Ensure your `wrangler.toml` file in the backend directory has the following content:
+   ```toml
+   name = "ai-workplace-backend"
+   main = "dist/index.js"
+   compatibility_date = "2023-05-18"
+
+   [vars]
+   ENVIRONMENT = "production"
+
+   [ai]
+   binding = "AI"
+   ```
+
+4. Log in to your Cloudflare account:
+   ```
+   npx wrangler login
+   ```
+
+5. Start the local development server:
+   ```
+   npm run dev
+   ```
+
+   The backend should now be running on `http://localhost:8787`.
+
+## Development
+
+- Frontend code is located in the `src` directory.
+- Backend code is located in the `backend/src` directory.
+- Make sure both frontend and backend servers are running for full functionality.
+
+## Testing
+
+To test the application:
+
+1. Open your browser and navigate to `http://localhost:5173`.
+2. Use the interface to interact with different AI tools.
+3. For the DALL-E tool, enter a prompt to generate an image.
+4. For text-based tools, enter prompts to generate text responses.
+
+## Troubleshooting
+
+- If you encounter CORS issues, ensure that your backend is properly configured to allow requests from your frontend's origin.
+- Check the browser console and server logs for any error messages.
+
+## Additional Information
+
+- The frontend uses React with TypeScript and Vite.
+- The backend uses Cloudflare Workers with the Cloudflare AI integration.
+- Styling is done with Tailwind CSS.
+
+For more detailed information about the project structure and components, please refer to the source code and comments within the files.
