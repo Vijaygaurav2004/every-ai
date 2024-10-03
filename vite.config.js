@@ -25,7 +25,9 @@ export default defineConfig({
       'lucide-react',
       '@radix-ui/react-slot',
       '@radix-ui/react-scroll-area',
-      'class-variance-authority'
+      'class-variance-authority',
+      'clsx',
+      'tailwind-merge'
     ]
   },
 })
