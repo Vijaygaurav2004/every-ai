@@ -18,4 +18,7 @@ declare module 'lucide-react' {
   export const Send: FC<SVGProps<SVGSVGElement>>
   export const ArrowLeft: FC<SVGProps<SVGSVGElement>>
   export const Download: FC<SVGProps<SVGSVGElement>>
+  export const X: FC<SVGProps<SVGSVGElement>>
+  export const Maximize2: FC<SVGProps<SVGSVGElement>>
+  export const Minimize2: FC<SVGProps<SVGSVGElement>>
 }

@@ -21,6 +21,11 @@ export default defineConfig({
     postcss: './postcss.config.js',
   },
   optimizeDeps: {
-    include: ['lucide-react']
+    include: [
+      'lucide-react',
+      '@radix-ui/react-slot',
+      '@radix-ui/react-scroll-area',
+      'class-variance-authority'
+    ]
   },
 })
