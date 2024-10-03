@@ -71,6 +71,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ toolName, onClose }) => {
             onChange={(e) => setInput(e.target.value)}
             placeholder={isImageTool ? "Describe the image you want to generate..." : "Type your message..."}
             onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            className="text-black"
           />
           <Button onClick={sendMessage}>
             {isImageTool ? <ImageIcon className="h-5 w-5" /> : <Send className="h-5 w-5" />}

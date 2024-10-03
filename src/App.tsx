@@ -35,7 +35,7 @@ const aiTools = [
   },
   { 
     id: 2, 
-    name: "DALL-E", 
+    name: "FLUX", 
     category: "Image", 
     icons: [ImageIcon, ImageIcon, ImageIcon],
     description: "AI system that creates realistic images and art from natural language descriptions."
