@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { ScrollArea } from './ui/scroll-area'
-import { Send, Image as ImageIcon, ArrowLeft } from 'lucide-react'
-import { API_URL } from '../config'
+import { Send, Image as ImageIcon, ArrowLeft, Download } from 'lucide-react'
+import { API_URL, IMAGE_API_URL } from '../config'
 import ReactMarkdown from 'react-markdown'
 
 interface ToolInterfaceProps {
@@ -26,30 +26,42 @@ const ToolInterface: React.FC<ToolInterfaceProps> = ({ toolName, onBack }) => {
       setIsLoading(true);
 
       try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            toolName: toolName,
-            messages: [...messages, newMessage].map(msg => ({
-              role: msg.role,
-              content: msg.content,
-            })),
-          }),
-        });
+        if (isImageTool) {
+          const response = await fetch(IMAGE_API_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: input }),
+          });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
 
-        const data = await response.json();
-
-        if (isImageTool && data.image) {
-          const imageUrl = `data:image/png;base64,${data.image}`;
+          const blob = await response.blob();
+          const imageUrl = URL.createObjectURL(blob);
           setMessages(prev => [...prev, { role: 'ai', content: imageUrl, type: 'image' }]);
         } else {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              toolName: toolName,
+              messages: [...messages, newMessage].map(msg => ({
+                role: msg.role,
+                content: msg.content,
+              })),
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
           setMessages(prev => [...prev, { role: 'ai', content: data.response, type: 'text' }]);
         }
       } catch (error) {
@@ -59,6 +71,15 @@ const ToolInterface: React.FC<ToolInterfaceProps> = ({ toolName, onBack }) => {
         setIsLoading(false);
       }
     }
+  };
+
+  const downloadImage = (imageUrl: string) => {
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = 'generated-image.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -77,7 +98,23 @@ const ToolInterface: React.FC<ToolInterfaceProps> = ({ toolName, onBack }) => {
                 {message.type === 'text' ? (
                   <ReactMarkdown>{message.content}</ReactMarkdown>
                 ) : (
-                  <img src={message.content} alt="Generated image" className="max-w-full h-auto rounded" />
+                  <div className="flex flex-col items-center">
+                    <img 
+                      src={message.content} 
+                      alt="Generated image" 
+                      className="max-w-full h-auto rounded cursor-pointer" 
+                      style={{ maxHeight: '300px', objectFit: 'contain' }}
+                      onClick={() => window.open(message.content, '_blank')}
+                    />
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="mt-2"
+                      onClick={() => downloadImage(message.content)}
+                    >
+                      <Download className="h-4 w-4 mr-2" /> Download
+                    </Button>
+                  </div>
                 )}
               </div>
             </div>

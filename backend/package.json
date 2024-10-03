@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --format=esm --platform=node --external:@cloudflare/ai"
+    "dev:image": "wrangler dev --config wrangler.image.toml",
+    "deploy:image": "wrangler deploy --config wrangler.image.toml",
+    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --format=esm --platform=node --external:@cloudflare/ai",
+    "build:image": "esbuild src/imageGeneratorWorker.ts --bundle --outfile=dist/imageGeneratorWorker.js --format=esm --platform=node --external:@cloudflare/ai"
   },
   "keywords": [],
   "author": "",

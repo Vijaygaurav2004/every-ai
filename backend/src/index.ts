@@ -1,7 +1,5 @@
 import { Ai } from '@cloudflare/ai'
 import { generateImage } from './imageGenerator'
-import * as base64 from 'base64-js'
-import * as mustache from 'mustache'
 
 export interface Env {
   AI: Ai;
@@ -21,36 +19,42 @@ export default {
     }
 
     if (request.method === 'POST') {
-      const { toolName, messages } = await request.json();
+      try {
+        const body = await request.text();
+        console.log('Received request body:', body);
 
-      if (toolName === 'DALL-E') {
-        const prompt = messages[messages.length - 1].content;
-        return generateImage(prompt, env);
-      } else {
+        const { toolName, messages } = JSON.parse(body);
+        console.log('Parsed request:', { toolName, messages });
+
         const ai = new Ai(env.AI);
-        try {
+
+        if (toolName === 'DALL-E') {
+          // Image generation
+          const prompt = messages[messages.length - 1].content;
+          return generateImage(prompt, env);
+        } else {
+          // Text generation
           const response = await ai.run('@cf/meta/llama-2-7b-chat-int8', {
             messages: messages,
           });
+          console.log('AI response:', response);
 
-          const aiResponse = typeof response === 'string' ? response : JSON.stringify(response);
-
-          return new Response(JSON.stringify({ response: aiResponse }), {
-            headers: {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*",
-            },
-          });
-        } catch (error) {
-          console.error('AI Error:', error);
-          return new Response(JSON.stringify({ error: 'Failed to process request' }), {
-            status: 500,
+          return new Response(JSON.stringify({ response: response.response }), {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
             },
           });
         }
+      } catch (error) {
+        console.error('Error processing request:', error);
+        return new Response(JSON.stringify({ error: 'Failed to process request', details: error.message }), {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        });
       }
     }
 
@@ -62,21 +66,3 @@ export default {
     });
   },
 };
-
-function formatResponse(text: string): string {
-  // Add some basic formatting
-  let formatted = text.trim();
-  
-  // If the response is very short, make it a heading
-  if (formatted.length < 20) {
-    formatted = `## ${formatted}`;
-  } else {
-    // Otherwise, add a generic greeting and make the response a paragraph
-    formatted = `## Hello!\n\n${formatted}`;
-  }
-  
-  // Add a separator
-  formatted += '\n\n---\n\n*Powered by AI*';
-
-  return formatted;
-}
