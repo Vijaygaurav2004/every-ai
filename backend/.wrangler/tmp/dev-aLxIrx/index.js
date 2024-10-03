@@ -46,6 +46,7 @@ function checkURL(request, init) {
 var urls;
 var init_checked_fetch = __esm({
   ".wrangler/tmp/bundle-CxJUCP/checked-fetch.js"() {
+    "use strict";
     urls = /* @__PURE__ */ new Set();
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
