@@ -21,4 +21,5 @@ declare module 'lucide-react' {
   export const X: FC<SVGProps<SVGSVGElement>>
   export const Maximize2: FC<SVGProps<SVGSVGElement>>
   export const Minimize2: FC<SVGProps<SVGSVGElement>>
+  export const LogOut: FC<SVGProps<SVGSVGElement>>
 }

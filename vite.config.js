@@ -27,7 +27,10 @@ export default defineConfig({
       '@radix-ui/react-scroll-area',
       'class-variance-authority',
       'clsx',
-      'tailwind-merge'
+      'tailwind-merge',
+      'firebase/app',
+      'firebase/auth',
+      'react-firebase-hooks/auth'
     ]
   },
 })
