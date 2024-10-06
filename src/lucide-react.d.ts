@@ -22,4 +22,10 @@ declare module 'lucide-react' {
   export const Maximize2: FC<SVGProps<SVGSVGElement>>
   export const Minimize2: FC<SVGProps<SVGSVGElement>>
   export const LogOut: FC<SVGProps<SVGSVGElement>>
+  export const Sun: FC<SVGProps<SVGSVGElement>>
+  export const Moon: FC<SVGProps<SVGSVGElement>>
+  export const Sparkles: FC<SVGProps<SVGSVGElement>>
+  export const Lock: FC<SVGProps<SVGSVGElement>>
+  export const Mail: FC<SVGProps<SVGSVGElement>>
+  export const Brain: FC<SVGProps<SVGSVGElement>>
 }

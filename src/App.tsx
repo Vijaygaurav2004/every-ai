@@ -13,68 +13,10 @@ import {
   Music, Video, FileText, MoreHorizontal, LogOut, Sun, Moon
 } from 'lucide-react'
 import useClickOutside from './hooks/useClickOutside'
+import { aiTools } from './data/aiTools'
 
 const categories = [
   "All", "Text", "Image", "Code", "Audio", "Video", "Document", "Other"
-]
-
-const aiTools = [
-  { 
-    id: 1, 
-    name: "ChatGPT", 
-    category: "Text", 
-    icons: [MessageSquare, MessageSquare, MessageSquare],
-    description: "Advanced language model for natural conversations and text generation."
-  },
-  { 
-    id: 2, 
-    name: "DALL-E", 
-    category: "Image", 
-    icons: [ImageIcon, ImageIcon, ImageIcon],
-    description: "AI system that creates realistic images and art from natural language descriptions."
-  },
-  { 
-    id: 3, 
-    name: "Copilot", 
-    category: "Code", 
-    icons: [Code, Code, Code],
-    description: "AI-powered coding assistant that helps developers write better code faster."
-  },
-  { 
-    id: 4, 
-    name: "Whisper", 
-    category: "Audio", 
-    icons: [Music, Music, Music],
-    description: "Automatic speech recognition system that can transcribe and translate multiple languages."
-  },
-  { 
-    id: 5, 
-    name: "Runway", 
-    category: "Video", 
-    icons: [Video, Video, Video],
-    description: "AI-powered video editing tool for creative professionals."
-  },
-  { 
-    id: 6, 
-    name: "GPT-4", 
-    category: "Text", 
-    icons: [MessageSquare, MessageSquare, MessageSquare],
-    description: "Latest large language model with improved reasoning and task completion capabilities."
-  },
-  { 
-    id: 7, 
-    name: "Stable Diffusion", 
-    category: "Image", 
-    icons: [ImageIcon, ImageIcon, ImageIcon],
-    description: "Open-source image generation model capable of producing detailed images from text descriptions."
-  },
-  { 
-    id: 8, 
-    name: "Claude", 
-    category: "Text", 
-    icons: [MessageSquare, MessageSquare, MessageSquare],
-    description: "AI assistant focused on task completion with strong ethical considerations."
-  },
 ]
 
 function App() {
@@ -156,13 +98,15 @@ function App() {
         {/* Header */}
         <header className="bg-white dark:bg-gray-800 p-4 flex justify-between items-center shadow-md">
           <div className="flex items-center space-x-4 flex-grow">
-            <Input 
-              className="max-w-md"
-              placeholder="Search AI Tools & Prompts"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              startAdornment={<Search className="h-5 w-5 text-gray-400" />}
-            />
+            <div className="relative max-w-md w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Input 
+                className="pl-10 w-full"
+                placeholder="Search AI Tools & Prompts"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="icon" onClick={() => setDarkMode(!darkMode)}>
