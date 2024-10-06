@@ -3,7 +3,9 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { ScrollArea } from "./ui/scroll-area"
 import ToolInterface from './ToolInterface'
-import { aiTools } from '../data/aiTools'  // Import aiTools from the data file
+import { aiTools } from '../data/aiTools'
+import { signOut } from 'firebase/auth'  // Add this import
+import { auth } from '../firebase'  // Add this import
 import { 
   Search, 
   Home, 
