@@ -3,8 +3,7 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { ScrollArea } from "./ui/scroll-area"
 import ToolInterface from './ToolInterface'
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase';
+import { aiTools } from '../data/aiTools'  // Import aiTools from the data file
 import { 
   Search, 
   Home, 
@@ -31,7 +30,7 @@ function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("")
   const [activeTool, setActiveTool] = useState<string | null>(null)
 
-  const filteredTools = aiTools.filter(tool => 
+  const filteredTools = aiTools.filter((tool: any) => 
     (selectedCategory === "All" || tool.category === selectedCategory) &&
     tool.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
