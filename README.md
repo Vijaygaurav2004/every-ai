@@ -1,6 +1,6 @@
-# AI Workplace
+# Every AI
 
-AI Workplace is a web application that provides an interface for various AI tools, including text generation and image creation using Cloudflare AI.
+Every AI is a web application that provides an interface for various AI tools, including text generation and image creation using Cloudflare AI.
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ Before you begin, ensure you have the following installed:
 1. Clone the repository:
    ```
    git clone <repository-url>
-   cd ai-workplace
+   cd every-ai
    ```
 
 2. Install dependencies:
