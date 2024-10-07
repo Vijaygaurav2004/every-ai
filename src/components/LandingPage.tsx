@@ -48,11 +48,15 @@ const LandingPage: React.FC = () => {
       case 'auth/wrong-password':
         return 'Invalid email or password. Please check your credentials and try again.';
       case 'auth/popup-closed-by-user':
-        return 'Sign-in popup was closed. Please try again.';
+        return 'The sign-in popup was closed. Please try again.';
       case 'auth/unauthorized-domain':
-        return 'This domain is not authorized for sign-in. Please contact support.';
+        return 'This domain is not authorized for sign-in. Please try again later or contact support.';
+      case 'auth/cancelled-popup-request':
+        return 'The sign-in process was cancelled. Please try again.';
+      case 'auth/popup-blocked':
+        return 'The sign-in popup was blocked by your browser. Please enable popups for this site and try again.';
       default:
-        return 'An error occurred during authentication. Please try again later.';
+        return `An error occurred during authentication: ${error.message}. Please try again later.`;
     }
   };
 
