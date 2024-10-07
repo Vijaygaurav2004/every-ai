@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../firebase';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { motion } from 'framer-motion';
-import { Sparkles, User, Lock, Mail, Brain, Code, Image, MessageSquare } from 'lucide-react';
+import { Sparkles, User, Lock, Mail, Brain, Code, Image as ImageIcon, MessageSquare, LogIn } from 'lucide-react';
+
 const LandingPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,6 +27,15 @@ const LandingPage: React.FC = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error('Google Sign-In error:', error);
+      setError('Google Sign-In failed. Please try again.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800 flex flex-col justify-center items-center p-4">
       <motion.div
@@ -44,7 +54,7 @@ const LandingPage: React.FC = () => {
           </p>
           <div className="space-y-4">
             <FeatureItem icon={Brain} text="Advanced language models for natural conversations" />
-            <FeatureItem icon={Image} text="AI-powered image generation and editing" />
+            <FeatureItem icon={ImageIcon} text="AI-powered image generation and editing" />
             <FeatureItem icon={Code} text="Intelligent code assistance and generation" />
             <FeatureItem icon={MessageSquare} text="Multi-lingual translation and text analysis" />
           </div>
@@ -81,6 +91,11 @@ const LandingPage: React.FC = () => {
               {isSignUp ? 'Sign Up' : 'Log In'}
             </Button>
           </form>
+          <div className="mt-4">
+            <Button onClick={handleGoogleSignIn} className="w-full bg-red-600 hover:bg-red-700 text-white">
+              <LogIn className="mr-2 h-4 w-4" /> Sign in with Google
+            </Button>
+          </div>
           <div className="mt-6 text-center">
             <button
               onClick={() => setIsSignUp(!isSignUp)}
