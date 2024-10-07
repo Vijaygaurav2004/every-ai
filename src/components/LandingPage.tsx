@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, AuthError } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -23,7 +23,7 @@ const LandingPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Authentication error:', error);
-      setError('Authentication failed. Please check your credentials and try again.');
+      setError(getErrorMessage(error as AuthError));
     }
   };
 
@@ -32,7 +32,27 @@ const LandingPage: React.FC = () => {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error('Google Sign-In error:', error);
-      setError('Google Sign-In failed. Please try again.');
+      setError(getErrorMessage(error as AuthError));
+    }
+  };
+
+  const getErrorMessage = (error: AuthError) => {
+    switch (error.code) {
+      case 'auth/email-already-in-use':
+        return 'This email is already in use. Please try logging in instead.';
+      case 'auth/invalid-email':
+        return 'Invalid email address. Please check and try again.';
+      case 'auth/weak-password':
+        return 'Password is too weak. Please use a stronger password.';
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        return 'Invalid email or password. Please check your credentials and try again.';
+      case 'auth/popup-closed-by-user':
+        return 'Sign-in popup was closed. Please try again.';
+      case 'auth/unauthorized-domain':
+        return 'This domain is not authorized for sign-in. Please contact support.';
+      default:
+        return 'An error occurred during authentication. Please try again later.';
     }
   };
 
