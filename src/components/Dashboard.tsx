@@ -4,8 +4,9 @@ import { Input } from "./ui/input"
 import { ScrollArea } from "./ui/scroll-area"
 import ToolInterface from './ToolInterface'
 import { aiTools } from '../data/aiTools'
-import { signOut } from 'firebase/auth'  // Add this import
-import { auth } from '../firebase'  // Add this import
+import { signOut } from 'firebase/auth'
+import { auth } from '../firebase'
+import { useAuthState } from 'react-firebase-hooks/auth'  // Add this import
 import { 
   Search, 
   Home, 
@@ -28,6 +29,7 @@ import {
 // ... (rest of the imports and constants)
 
 function Dashboard() {
+  const [user] = useAuthState(auth);  // Add this line
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [searchTerm, setSearchTerm] = useState("")
   const [activeTool, setActiveTool] = useState<string | null>(null)
