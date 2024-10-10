@@ -3,6 +3,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './firebase';
 import LandingPage from './components/LandingPage';
 import ToolInterface from './components/ToolInterface'
+import History from './components/History'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
@@ -10,7 +11,8 @@ import { ScrollArea } from "./components/ui/scroll-area"
 import { 
   Search, Home, FolderOpen, Users, Plus, Play, User,
   ChevronDown, MessageSquare, Image as ImageIcon, Code,
-  Music, Video, FileText, MoreHorizontal, LogOut, Sun, Moon
+  Music, Video, FileText, MoreHorizontal, LogOut, Sun, Moon,
+  History as HistoryIcon
 } from 'lucide-react'
 import useClickOutside from './hooks/useClickOutside'
 import { aiTools } from './data/aiTools'
@@ -26,6 +28,7 @@ function App() {
   const [activeTool, setActiveTool] = useState<string | null>(null)
   const [darkMode, setDarkMode] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
 
   useClickOutside(userMenuRef, () => setShowUserMenu(false))
@@ -62,7 +65,7 @@ function App() {
   }
 
   if (activeTool) {
-    return <ToolInterface toolName={activeTool} onBack={() => setActiveTool(null)} />
+    return <ToolInterface toolName={activeTool} onBack={() => setActiveTool(null)} userId={user.uid} />
   }
 
   return (
@@ -78,8 +81,11 @@ function App() {
           <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Every AI</h1>
         </div>
         <nav className="flex-1 space-y-2">
-          <Button variant="ghost" className="w-full justify-start">
+          <Button variant="ghost" className="w-full justify-start" onClick={() => setShowHistory(false)}>
             <Home className="mr-2 h-4 w-4" /> Dashboard
+          </Button>
+          <Button variant="ghost" className="w-full justify-start" onClick={() => setShowHistory(true)}>
+            <HistoryIcon className="mr-2 h-4 w-4" /> History
           </Button>
           <Button variant="ghost" className="w-full justify-start">
             <FolderOpen className="mr-2 h-4 w-4" /> Projects
@@ -135,69 +141,75 @@ function App() {
           </div>
         </header>
 
-        {/* Category Filters */}
-        <ScrollArea className="flex-shrink-0 bg-gray-50 dark:bg-gray-800 p-4">
-          <div className="flex space-x-2">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                onClick={() => setSelectedCategory(category)}
-                className="whitespace-nowrap"
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-        </ScrollArea>
+        {showHistory ? (
+          <History />
+        ) : (
+          <>
+            {/* Category Filters */}
+            <ScrollArea className="flex-shrink-0 bg-gray-50 dark:bg-gray-800 p-4">
+              <div className="flex space-x-2">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    onClick={() => setSelectedCategory(category)}
+                    className="whitespace-nowrap"
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+            </ScrollArea>
 
-        {/* Tools Grid */}
-        <ScrollArea className="flex-grow p-6">
-          <AnimatePresence>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            >
-              {filteredTools.map((tool) => (
-                <motion.div
-                  key={tool.id}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+            {/* Tools Grid */}
+            <ScrollArea className="flex-grow p-6">
+              <AnimatePresence>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                 >
-                  <div className="p-4">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex space-x-2">
-                        {tool.icons.map((Icon, index) => (
-                          <div key={index} className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-md flex items-center justify-center">
-                            <Icon className="h-5 w-5 text-blue-600 dark:text-blue-300" />
-                          </div>
-                        ))}
-                      </div>
-                      <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                        <MoreHorizontal className="h-5 w-5" />
-                      </Button>
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">{tool.name}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{tool.description}</p>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4">
-                    <Button 
-                      variant="default" 
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                      onClick={() => openToolInterface(tool.name)}
+                  {filteredTools.map((tool) => (
+                    <motion.div
+                      key={tool.id}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
                     >
-                      Open {tool.category === "Image" ? "Image Generator" : "Tool"}
-                    </Button>
-                  </div>
+                      <div className="p-4">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex space-x-2">
+                            {tool.icons.map((Icon, index) => (
+                              <div key={index} className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-md flex items-center justify-center">
+                                <Icon className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+                              </div>
+                            ))}
+                          </div>
+                          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                            <MoreHorizontal className="h-5 w-5" />
+                          </Button>
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2">{tool.name}</h3>
+                        <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{tool.description}</p>
+                      </div>
+                      <div className="bg-gray-50 dark:bg-gray-700 p-4">
+                        <Button 
+                          variant="default" 
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                          onClick={() => openToolInterface(tool.name)}
+                        >
+                          Open {tool.category === "Image" ? "Image Generator" : "Tool"}
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ))}
                 </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </ScrollArea>
+              </AnimatePresence>
+            </ScrollArea>
+          </>
+        )}
       </div>
     </div>
   )

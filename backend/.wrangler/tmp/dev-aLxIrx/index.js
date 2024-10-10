@@ -27,7 +27,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// .wrangler/tmp/bundle-TQhSMQ/checked-fetch.js
+// .wrangler/tmp/bundle-X9yg5c/checked-fetch.js
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
     (typeof request === "string" ? new Request(request, init) : request).url
@@ -45,7 +45,7 @@ function checkURL(request, init) {
 }
 var urls;
 var init_checked_fetch = __esm({
-  ".wrangler/tmp/bundle-TQhSMQ/checked-fetch.js"() {
+  ".wrangler/tmp/bundle-X9yg5c/checked-fetch.js"() {
     "use strict";
     urls = /* @__PURE__ */ new Set();
     globalThis.fetch = new Proxy(globalThis.fetch, {
@@ -177,11 +177,11 @@ var require_base64_js = __commonJS({
   }
 });
 
-// .wrangler/tmp/bundle-TQhSMQ/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-X9yg5c/middleware-loader.entry.ts
 init_checked_fetch();
 init_modules_watch_stub();
 
-// .wrangler/tmp/bundle-TQhSMQ/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-X9yg5c/middleware-insertion-facade.js
 init_checked_fetch();
 init_modules_watch_stub();
 
@@ -837,47 +837,128 @@ var W = class {
 };
 
 // dist/index.js
+async function generateImage(prompt, env) {
+  throw new Error("This function is deprecated. Image generation is now handled in the main fetch function.");
+}
+async function initializeDatabase(db) {
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT NOT NULL,
+      tool_name TEXT NOT NULL,
+      prompt TEXT NOT NULL,
+      response_type TEXT NOT NULL,
+      response TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+}
+async function saveToHistory(db, userId, toolName, prompt, responseType, response) {
+  await db.prepare(
+    "INSERT INTO history (user_id, tool_name, prompt, response_type, response) VALUES (?, ?, ?, ?, ?)"
+  ).bind(userId, toolName, prompt, responseType, response).run();
+}
+async function getHistory(db, userId) {
+  return await db.prepare("SELECT * FROM history WHERE user_id = ? ORDER BY created_at DESC").bind(userId).all();
+}
+var corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type"
+};
 var src_default = {
   async fetch(request, env) {
+    await initializeDatabase(env.DB);
     if (request.method === "OPTIONS") {
       return new Response(null, {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type"
-        }
+        headers: corsHeaders
       });
     }
-    const ai = new W(env.AI);
-    if (request.method === "POST") {
-      const { messages } = await request.json();
-      try {
-        const response = await ai.run("@cf/meta/llama-3-8b-instruct", {
-          messages
-        });
-        const aiResponse = typeof response === "string" ? response : JSON.stringify(response);
-        return new Response(JSON.stringify({ response: aiResponse }), {
+    const url = new URL(request.url);
+    const path = url.pathname;
+    if (path === "/history" && request.method === "GET") {
+      const userId = url.searchParams.get("userId");
+      if (!userId) {
+        return new Response(JSON.stringify({ error: "User ID is required" }), {
+          status: 400,
           headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
+            ...corsHeaders
+          }
+        });
+      }
+      try {
+        const history = await getHistory(env.DB, userId);
+        return new Response(JSON.stringify({ results: history }), {
+          headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders
           }
         });
       } catch (error) {
-        console.error("AI Error:", error);
-        return new Response(JSON.stringify({ error: "Failed to process request" }), {
+        console.error("Error fetching history:", error);
+        return new Response(JSON.stringify({ error: "Failed to fetch history", details: error instanceof Error ? error.message : String(error) }), {
           status: 500,
           headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
+            ...corsHeaders
+          }
+        });
+      }
+    }
+    if (request.method === "POST") {
+      try {
+        const { toolName, messages, userId } = await request.json();
+        console.log("Received request:", { toolName, userId, messagesCount: messages.length });
+        const ai = new W(env.AI);
+        if (toolName === "DALL-E") {
+          const prompt = messages[messages.length - 1].content;
+          const imageResponse = await generateImage(prompt, env);
+          await saveToHistory(env.DB, userId, toolName, prompt, "image", await imageResponse.text());
+          return new Response(imageResponse.body, {
+            headers: {
+              ...imageResponse.headers,
+              ...corsHeaders
+            }
+          });
+        } else {
+          console.log("Running AI model for text generation");
+          try {
+            const response = await ai.run("@cf/meta/llama-2-7b-chat-int8", {
+              messages
+            });
+            console.log("AI response:", response);
+            if (typeof response === "object" && "response" in response) {
+              await saveToHistory(env.DB, userId, toolName, messages[messages.length - 1].content, "text", response.response);
+              return new Response(JSON.stringify({ response: response.response }), {
+                headers: {
+                  "Content-Type": "application/json",
+                  ...corsHeaders
+                }
+              });
+            } else {
+              console.error("Unexpected response format:", response);
+              throw new Error("Unexpected response format from AI model");
+            }
+          } catch (aiError) {
+            console.error("AI model error:", aiError);
+            throw new Error(`AI model error: ${aiError.message}`);
+          }
+        }
+      } catch (error) {
+        console.error("Error processing request:", error);
+        return new Response(JSON.stringify({ error: "Failed to process request", details: error instanceof Error ? error.message : String(error) }), {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders
           }
         });
       }
     }
     return new Response("Method not allowed", {
       status: 405,
-      headers: {
-        "Access-Control-Allow-Origin": "*"
-      }
+      headers: corsHeaders
     });
   }
 };
@@ -926,7 +1007,7 @@ var jsonError = async (request, env, _ctx, middlewareCtx) => {
 };
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-TQhSMQ/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-X9yg5c/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -957,7 +1038,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
   ]);
 }
 
-// .wrangler/tmp/bundle-TQhSMQ/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-X9yg5c/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

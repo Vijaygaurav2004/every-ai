@@ -1,5 +1,5 @@
-name = "ai-workplace-image-generator"
-main = "dist/imageGeneratorWorker.js"
+name = "ai-workplace-text-generator"
+main = "dist/textGeneratorWorker.js"
 compatibility_date = "2023-05-18"
 
 [vars]

@@ -9,28 +9,18 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  build: {
-    outDir: 'dist',
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://ai-workplace-backend.everyai-com.workers.dev',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/api-image': {
+        target: 'https://ai-workplace-image-generator.everyai-com.workers.dev',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-image/, ''),
       },
     },
-  },
-  css: {
-    postcss: './postcss.config.js',
-  },
-  optimizeDeps: {
-    include: [
-      'lucide-react',
-      '@radix-ui/react-slot',
-      '@radix-ui/react-scroll-area',
-      'class-variance-authority',
-      'clsx',
-      'tailwind-merge',
-      'firebase/app',
-      'firebase/auth',
-      'react-firebase-hooks/auth'
-    ]
   },
 })
