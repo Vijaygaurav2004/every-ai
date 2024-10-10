@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import { HISTORY_API_URL } from '../config';
-import { Trash2 } from 'lucide-react';
+import { Trash } from 'lucide-react';
 
 interface HistoryItem {
   id: number;
@@ -84,7 +84,7 @@ const History: React.FC = () => {
                 className="absolute top-2 right-2"
                 onClick={() => deleteHistoryItem(item.id)}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash className="h-4 w-4" />
               </Button>
             </div>
           ))

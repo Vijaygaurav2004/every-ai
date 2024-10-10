@@ -12,7 +12,7 @@ import {
   Search, Home, FolderOpen, Users, Plus, Play, User,
   ChevronDown, MessageSquare, Image as ImageIcon, Code,
   Music, Video, FileText, MoreHorizontal, LogOut, Sun, Moon,
-  History as HistoryIcon
+  Clock as HistoryIcon
 } from 'lucide-react'
 import useClickOutside from './hooks/useClickOutside'
 import { aiTools } from './data/aiTools'

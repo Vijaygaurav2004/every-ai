@@ -50,7 +50,7 @@ function Dashboard() {
   };
 
   if (activeTool) {
-    return <ToolInterface toolName={activeTool} onBack={() => setActiveTool(null)} />
+    return <ToolInterface toolName={activeTool} onBack={() => setActiveTool(null)} userId={user?.uid || ''} />
   }
 
   return (

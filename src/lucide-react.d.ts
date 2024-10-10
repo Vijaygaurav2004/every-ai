@@ -29,4 +29,8 @@ declare module 'lucide-react' {
   export const Mail: FC<SVGProps<SVGSVGElement>>
   export const Brain: FC<SVGProps<SVGSVGElement>>
   export const LogIn: FC<SVGProps<SVGSVGElement>>
+  export const Clock: FC<SVGProps<SVGSVGElement>>
+  export const Trash: FC<SVGProps<SVGSVGElement>>
+  export const MessageCircle: FC<SVGProps<SVGSVGElement>>
+  export const Loader: FC<SVGProps<SVGSVGElement>>
 }

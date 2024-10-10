@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { ScrollArea } from './ui/scroll-area'
-import { Send, Image as ImageIcon, ArrowLeft, Download, User, Bot, Loader2 } from 'lucide-react'
+import { Send, Image as ImageIcon, ArrowLeft, Download, User, MessageCircle, Loader } from 'lucide-react'
 import { TEXT_API_URL, IMAGE_API_URL } from '../config'
 import ReactMarkdown from 'react-markdown'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -127,7 +127,7 @@ const ToolInterface: React.FC<ToolInterfaceProps> = ({ toolName, onBack }) => {
             >
               <div className={`flex items-start max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                 <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.role === 'user' ? 'bg-blue-500 ml-2' : 'bg-purple-500 mr-2'}`}>
-                  {message.role === 'user' ? <User className="w-5 h-5 text-white" /> : <Bot className="w-5 h-5 text-white" />}
+                  {message.role === 'user' ? <User className="w-5 h-5 text-white" /> : <MessageCircle className="w-5 h-5 text-white" />}
                 </div>
                 <div className={`p-3 rounded-lg ${message.role === 'user' ? 'bg-blue-600' : 'bg-gray-700'}`}>
                   {message.type === 'text' ? (
@@ -158,7 +158,7 @@ const ToolInterface: React.FC<ToolInterfaceProps> = ({ toolName, onBack }) => {
         </AnimatePresence>
         {isLoading && (
           <div className="flex justify-center items-center mt-4">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+            <Loader className="h-5 w-5 animate-spin" />
           </div>
         )}
       </ScrollArea>
@@ -191,7 +191,7 @@ const ToolInterface: React.FC<ToolInterfaceProps> = ({ toolName, onBack }) => {
             className="bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300"
           >
             {isLoading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader className="h-5 w-5 animate-spin" />
             ) : isImageTool ? (
               <ImageIcon className="h-5 w-5" />
             ) : (
