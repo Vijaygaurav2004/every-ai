@@ -1,12 +1,9 @@
-name = "ai-workplace-backend"
-main = "dist/index.js"
+name = "ai-workplace-history"
+main = "dist/historyWorker.js"
 compatibility_date = "2023-05-18"
 
 [vars]
 ENVIRONMENT = "production"
-
-[ai]
-binding = "AI"
 
 [[d1_databases]]
 binding = "DB"

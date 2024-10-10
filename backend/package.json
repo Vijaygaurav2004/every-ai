@@ -7,9 +7,13 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "dev:image": "wrangler dev --config wrangler.image.toml",
-    "deploy:image": "wrangler deploy --config wrangler.image.toml",
     "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --format=esm --platform=node --external:@cloudflare/ai",
-    "build:image": "esbuild src/imageGeneratorWorker.ts --bundle --outfile=dist/imageGeneratorWorker.js --format=esm --platform=node --external:@cloudflare/ai"
+    "build:image": "esbuild src/imageGeneratorWorker.ts --bundle --outfile=dist/imageGeneratorWorker.js --format=esm --platform=node --external:@cloudflare/ai",
+    "build:text": "esbuild src/textGeneratorWorker.ts --bundle --outfile=dist/textGeneratorWorker.js --format=esm --platform=node --external:@cloudflare/ai",
+    "deploy:text": "npm run build:text && wrangler deploy --config wrangler.text.toml",
+    "deploy:image": "npm run build:image && wrangler deploy --config wrangler.image.toml",
+    "build:history": "esbuild src/historyWorker.ts --bundle --outfile=dist/historyWorker.js --format=esm --platform=node --external:@cloudflare/ai",
+    "deploy:history": "npm run build:history && wrangler deploy --config wrangler.history.toml"
   },
   "keywords": [],
   "author": "",
@@ -19,8 +23,6 @@
     "wrangler": "^3.0.0"
   },
   "dependencies": {
-    "@cloudflare/ai": "^1.0.0",
-    "base64-js": "^1.5.1",
-    "mustache": "^4.2.0"
+    "@cloudflare/ai": "^1.0.0"
   }
 }
